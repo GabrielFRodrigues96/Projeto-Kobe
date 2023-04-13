@@ -1,0 +1,42 @@
+# Here you can define all your data sets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+
+raw_data:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/data.csv
+  
+conformed_data:
+  type: pandas.ParquetDataSet
+  filepath: data/02_intermediate/conformed_data.parquet
+
+x_train:
+  type: pandas.ParquetDataSet
+  filepath: data/03_primary/x_train.parquet
+
+x_train_norm:
+  type: pandas.ParquetDataSet
+  filepath: data/04_feature/x_train_norm.parquet
+
+x_test:
+  type: pandas.ParquetDataSet
+  filepath: data/03_primary/x_test.parquet
+
+y_train:
+  type: pandas.ParquetDataSet
+  filepath: data/03_primary/y_train.parquet
+
+y_test:
+  type: pandas.ParquetDataSet
+  filepath: data/03_primary/y_test.parquet
+
+best_model:
+  type: pickle.PickleDataSet
+  filepath: dat/06_models/best_classificator.pickle
+
+logistic_regression_model:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/logistic_reg_model.pickle
+
