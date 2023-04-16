@@ -8,9 +8,15 @@ raw_data:
   type: pandas.CSVDataSet
   filepath: data/01_raw/data.csv
   
-conformed_data:
+conformed_data_2PT:
   type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/conformed_data.parquet
+  filepath: data/02_intermediate/conformed_data_2PT.parquet
+
+conformed_data_3PT:
+  type: pandas.ParquetDataSet
+  filepath: data/02_intermediate/conformed_data_3PT.parquet
+
+
 
 x_train:
   type: pandas.ParquetDataSet

@@ -3,14 +3,35 @@ import mlflow
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
 from sklearn.linear_model import LogisticRegression
 from pycaret.classification import *
+from imblearn.over_sampling import SMOTE
 
-def conform_data(data):
+def conform_data_2PT(data):
     data_2p = data[data['shot_type']=="2PT Field Goal"]
     data_2p = data_2p[data_2p['shot_made_flag'].isna()==False]
     df = data_2p[['lat','period','minutes_remaining','lon','playoffs','shot_distance','shot_made_flag']]
-    return df 
+    return df
 
-def train_data(data):
+def conform_data_3PT(data):
+    data_2p = data[data['shot_type']=="3PT Field Goal"]
+    data_2p = data_2p[data_2p['shot_made_flag'].isna()==False]
+    df = data_2p[['lat','period','minutes_remaining','lon','playoffs','shot_distance','shot_made_flag']]
+    return df
+
+#Corrigindo desbalanceamento das amostras no dataset 3PT Field Goal
+def train_data_3PT(data):
+    x = data.drop(columns = ['shot_made_flag']).copy()
+    y = data['shot_made_flag']
+
+    x_resample,y_resample = SMOTE().fit_resample(x,y)
+
+    x_train,x_test,y_train,y_test = train_test_split(x_resample,y_resample,test_size=0.2,random_state= 42)
+    
+    y_train = pd.DataFrame(y_train)
+    y_test = pd.DataFrame(y_test)
+
+    return [x_train,x_test,y_train,y_test]
+
+def train_data_2PT(data):
     x = data.drop(columns = ['shot_made_flag']).copy()
     y = data['shot_made_flag']
 
@@ -53,7 +74,6 @@ def train_logistic_regression(x_train,y_train):
 
 def best_classification (data):
     experiment_name = "best_classificator"
-    #experiment_start = mlflow.create_experiment(experiment_name)
     experiment = mlflow.get_experiment_by_name(experiment_name)
 
     with mlflow.start_run(experiment_id = experiment.experiment_id, nested = True):
@@ -91,10 +111,10 @@ def report_model(clf,params,n_folds):
     mlflow.log_metric('f1_mean',clf.cv_results_['mean_test_f1'][idx])
 
     mlflow.log_metric('precision_std',clf.cv_results_['std_test_precision'][idx])
-    mlflow.log_metric('precision_std',clf.cv_results_['mean_test_precision'][idx])
+    mlflow.log_metric('precision_mean',clf.cv_results_['mean_test_precision'][idx])
  
     mlflow.log_metric('recall_std',clf.cv_results_['std_test_recall'][idx])
-    mlflow.log_metric('recall_std',clf.cv_results_['mean_test_recall'][idx])  
+    mlflow.log_metric('recall_mean',clf.cv_results_['mean_test_recall'][idx])  
 
     mlflow.log_param('model','logistic_regression')
 
@@ -102,6 +122,5 @@ def report_model(clf,params,n_folds):
     mlflow.log_param('n_folds',n_folds)
 
     mlflow.sklearn.log_model(clf, "model")
-    #mlflow.log_artifacts(output_dir)
 
 

@@ -4,24 +4,35 @@ generated using Kedro 0.18.7
 """
 
 from kedro.pipeline import Pipeline, node, pipeline
-from .nodes import conform_data, train_logistic_regression,train_data,best_classification,report_model,normalize
-
+from .nodes import conform_data_2PT,conform_data_3PT,train_logistic_regression,train_data_2PT,best_classification,report_model,normalize, train_data_3PT
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
     [
+        # node(
+        #     func = conform_data_2PT,
+        #     name = 'conform_data_2PT',
+        #     inputs = 'raw_data',
+        #     outputs = 'conformed_data_2PT',
+        # ),
         node(
-            func = conform_data,
-            name = 'conform_data',
-            inputs = 'raw_data',
-            outputs = 'conformed_data',
+            func = conform_data_3PT,
+            name = 'conform_data_3PT',
+            inputs= 'raw_data',
+            outputs= 'conformed_data_3PT',
         ),
         node(
-            func = train_data,
-            name = 'train_data',
-            inputs = 'conformed_data',
-            outputs = ['x_train','x_test','y_train','y_test']
-        ),
+            func = train_data_3PT,
+            name = 'train_data_3PT',
+            inputs = 'conformed_data_3PT',
+            outputs = ['x_train','x_test','y_train','y_test'],
+        ),       
+        # node(
+        #     func = train_data_2PT,
+        #     name = 'train_data',
+        #     inputs = 'conformed_data_2PT',
+        #     outputs = ['x_train','x_test','y_train','y_test']
+        # ),
         ##node(
         ##    func =best_classification,
         ##    name = 'best_classificator',
